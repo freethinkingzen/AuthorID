@@ -7,6 +7,8 @@ import string
 
 
 
+N = 300   # Maximum features after feature selection
+
 # File locations of novels this program uses for the dataset
 NOVELS = ["./hw-authors/austen-northanger-abbey.txt",
           "./hw-authors/shelley-frankenstein.txt",
@@ -86,7 +88,7 @@ class Dataset:
 
           word = word.lower()
           # Add non single-character words to dictionary if word with authorID, pgID tuple
-          if(len(word) > 2):
+          if(len(word) > 1):
             if word not in self.dictionary:
               self.dictionary[word] = {self.pgID}
             else:
@@ -168,8 +170,8 @@ class Dataset:
 
 
 
-  # Tracks the gain calculated for each split and selects the top 300 features
-  # Updates self.binary with the newly selected 300 features
+  # Tracks the gain calculated for each split and selects the top N features
+  # Updates self.binary with the newly selected N features
   def gainSelection(self):
 
     # Hold the gain of each word
@@ -188,9 +190,10 @@ class Dataset:
       finalEntropy = self.calcFinalEnt(self.headers[i])
       wordGain[i] = startEntropy - finalEntropy
 
-    # Get the word indexes of the top 300 features
+    # Get the word indexes of the top N features
     sortedKeys = sorted(wordGain, key=wordGain.get)
-    top = sortedKeys[-1:-301:-1]
+    n = (-1 * N) - 1
+    top = sortedKeys[-1:n:-1]
     top.extend([0,1])
     top.sort()
 
